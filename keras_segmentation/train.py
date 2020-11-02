@@ -73,6 +73,7 @@ def train(model,
           augmentation_name="aug_all"):
 
     from .models.all_models import model_from_name
+    print("Hola Mundo")
     # check if user gives model name instead of the model object
     if isinstance(model, six.string_types):
         # create the model from the name
