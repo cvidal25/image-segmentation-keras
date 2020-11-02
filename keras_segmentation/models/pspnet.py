@@ -87,6 +87,7 @@ def vgg_pspnet(n_classes,  input_height=384, input_width=576):
     model = _pspnet(n_classes, get_vgg_encoder,
                     input_height=input_height, input_width=input_width)
     model.model_name = "vgg_pspnet"
+    print("Hola Mundo")
     return model
 
 
