@@ -4,7 +4,9 @@ from .data_utils.data_loader import image_segmentation_generator, \
 import glob
 import six
 from keras.callbacks import Callback
-
+from keras.losses  import BinaryCrossentropy
+from keras.metrics import Accuracy, MeanIoU, KLDivergence
+from keras.optimizers import Adam
 
 def find_latest_checkpoint(checkpoints_path, fail_safe=True):
 
@@ -69,6 +71,7 @@ def train(model,
           gen_use_multiprocessing=False,
           ignore_zero_class=False,
           optimizer_name='adam',
+          learning_rate=0.001,
           do_augment=False,
           augmentation_name="aug_all"):
 
@@ -101,9 +104,13 @@ def train(model,
         else:
             loss_k = 'categorical_crossentropy'
 
+        if optimizer_name == 'adam':
+            optimizer =  Adam(learning_rate=learning_rate)
+        
+
         model.compile(loss=loss_k,
-                      optimizer=optimizer_name,
-                      metrics=['accuracy'])
+                      optimizer=optimizer,
+                      metrics=[Accuracy(),MeanIoU(n_classes), KLDivergence()])
 
     if checkpoints_path is not None:
         with open(checkpoints_path+"_config.json", "w") as f:
