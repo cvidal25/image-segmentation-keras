@@ -150,7 +150,9 @@ def predict(model=None, inp=None, out_fname=None,
 
     x = get_image_array(inp, input_width, input_height,
                         ordering=IMAGE_ORDERING)
-    pr = model.predict(np.array([x]))[0]
+
+    pr_full = model.predict(np.array([x]))
+    pr = pr_full[0]
     pr = pr.reshape((output_height,  output_width, n_classes)).argmax(axis=2)
 
     seg_img = visualize_segmentation(pr, inp, n_classes=n_classes,
@@ -163,7 +165,7 @@ def predict(model=None, inp=None, out_fname=None,
     if out_fname is not None:
         cv2.imwrite(out_fname, seg_img)
 
-    return pr
+    return [pr_full,pr]
 
 
 def predict_multiple(model=None, inps=None, inp_dir=None, out_dir=None,
@@ -183,6 +185,7 @@ def predict_multiple(model=None, inps=None, inp_dir=None, out_dir=None,
     assert type(inps) is list
 
     all_prs = []
+    all_full_prs = []
 
     for i, inp in enumerate(tqdm(inps)):
         if out_dir is None:
@@ -198,10 +201,11 @@ def predict_multiple(model=None, inps=None, inp_dir=None, out_dir=None,
                      show_legends=show_legends, colors=colors,
                      prediction_width=prediction_width,
                      prediction_height=prediction_height)
+        
+        all_prs.append(pr[1])
+        all_full_prs.append(pr[0])
 
-        all_prs.append(pr)
-
-    return all_prs
+    return [all_prs,all_full_prs]
 
 
 def set_video(inp, video_name):
@@ -229,7 +233,7 @@ def predict_video(model=None, inp=None, output=None,
         prev_time = time()
         ret, frame = cap.read()
         if frame is not None:
-            pr = predict(model=model, inp=frame)
+            pr = predict(model=model, inp=frame)[1]
             fused_img = visualize_segmentation(
                 pr, frame, n_classes=n_classes,
                 colors=colors,
@@ -282,7 +286,7 @@ def evaluate(model=None, inp_images=None, annotations=None,
     n_pixels = np.zeros(model.n_classes)
 
     for inp, ann in tqdm(zip(inp_images, annotations)):
-        pr = predict(model, inp)
+        pr = predict(model, inp)[1]
         gt = get_segmentation_array(ann, model.n_classes,
                                     model.output_width, model.output_height,
                                     no_reshape=True)
