@@ -154,6 +154,7 @@ def predict(model=None, inp=None, out_fname=None,
 
     pr_full = model.predict(np.array([x]))
     pr = pr_full[0]
+    pr_cube = pr.reshape((output_height,  output_width, n_classes))
     pr = pr.reshape((output_height,  output_width, n_classes)).argmax(axis=2)
 
     seg_img = visualize_segmentation(pr, inp, n_classes=n_classes,
@@ -165,7 +166,7 @@ def predict(model=None, inp=None, out_fname=None,
 
     if out_fname is not None:
         cv2.imwrite(out_fname, seg_img)
-        np.save(out_fname.split(".",1)[0], pr_full)
+        np.save(out_fname.split(".",1)[0], pr_cube)
 
 
 
