@@ -3,6 +3,7 @@ import random
 import json
 import os
 import six
+import numpy as np
 
 import cv2
 import numpy as np
@@ -164,6 +165,9 @@ def predict(model=None, inp=None, out_fname=None,
 
     if out_fname is not None:
         cv2.imwrite(out_fname, seg_img)
+        np.save(out_fname.split(".",1)[0])
+
+
 
     return [pr_full,pr]
 
