@@ -165,7 +165,7 @@ def predict(model=None, inp=None, out_fname=None,
 
     if out_fname is not None:
         cv2.imwrite(out_fname, seg_img)
-        np.save(out_fname.split(".",1)[0])
+        np.save(out_fname.split(".",1)[0], pr_full)
 
 
 
