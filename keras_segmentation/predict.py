@@ -170,7 +170,7 @@ def predict(model=None, inp=None, out_fname=None,
 
 
 
-    return [pr_full,pr]
+    return [pr_cube,pr]
 
 
 def predict_multiple(model=None, inps=None, inp_dir=None, out_dir=None,
